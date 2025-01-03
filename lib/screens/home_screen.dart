@@ -18,9 +18,8 @@ class HomeScreen extends StatelessWidget {
         ),
         child: Center(
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.end,
             children: [
-              SizedBox(height: 300),
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.black,
@@ -30,11 +29,12 @@ class HomeScreen extends StatelessWidget {
                     borderRadius: BorderRadius.circular(16),
                   ),
                 ),
-                child: Text('테스트 시작'),
+                child: Text('테스트 시작하기'),
                 onPressed: () {
                   Navigator.pushNamed(context, '/camera', arguments: camera);
                 },
               ),
+              const SizedBox(height: 48),
             ],
           ),
         ),

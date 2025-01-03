@@ -3,7 +3,6 @@ import 'package:camera/camera.dart';
 import 'package:animal_test/screens/home_screen.dart';
 import 'package:animal_test/screens/camera_screen.dart';
 import 'package:animal_test/screens/display_screen.dart';
-import 'package:animal_test/screens/analyze_screen.dart';
 
 class AppRoutes {
   static const String home = '/home';
@@ -27,7 +26,6 @@ class AppRoutes {
               ModalRoute.of(context)!.settings.arguments as String;
           return DisplayPictureScreen(imagePath: imagePath);
         },
-        // analyze: (context) => AnalyzeScreen(),
       };
 
   static Route<dynamic>? onGenerateRoute(RouteSettings settings) {

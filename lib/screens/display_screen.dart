@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:google_generative_ai/google_generative_ai.dart';
 import 'package:camera/camera.dart';
+import 'package:http/http.dart' as http;
 
 // A widget that displays the picture taken by the user.
 class DisplayPictureScreen extends StatefulWidget {
@@ -17,6 +18,8 @@ class _DisplayPictureScreenState extends State<DisplayPictureScreen> {
   static const String _prompt =
       'Which animal does the person in this picture most resemble? Please answer only the name of the animal.';
   dynamic _response = '';
+  dynamic _imageResponse = '';
+  bool _isLoading = false;
 
   @override
   Widget build(BuildContext context) {
@@ -25,22 +28,33 @@ class _DisplayPictureScreenState extends State<DisplayPictureScreen> {
       body: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
-          Expanded(flex: 1, child: Container(color: Colors.black)),
+          Expanded(flex: 2, child: Container(color: Colors.black)),
           Expanded(
-            flex: 8,
+            flex: 6,
             child: _response == ''
-                ? Image.network(widget.imagePath, fit: BoxFit.contain)
+                ? Container(
+                    decoration: BoxDecoration(
+                      image: DecorationImage(
+                        image: NetworkImage(
+                          widget.imagePath,
+                        ),
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                  )
                 : Container(
                     decoration: BoxDecoration(
                       image: DecorationImage(
-                        image: AssetImage('assets/background.png'),
-                        fit: BoxFit.fill,
+                        image: MemoryImage(
+                          _imageResponse,
+                        ),
+                        fit: BoxFit.cover,
                       ),
                     ),
                   ),
           ),
           Expanded(
-            flex: 1,
+            flex: 2,
             child: Container(
               color: Colors.black,
               child: Row(
@@ -56,6 +70,10 @@ class _DisplayPictureScreenState extends State<DisplayPictureScreen> {
                       ),
                     ),
                     onPressed: () async {
+                      setState(() {
+                        _isLoading = true;
+                      });
+
                       // Gemini TEST
                       const apiKey = 'Enter_your_API_KEY';
                       if (apiKey == null) {
@@ -74,12 +92,22 @@ class _DisplayPictureScreenState extends State<DisplayPictureScreen> {
                       final response = await model.generateContent([
                         Content.multi([prompt, ...imageParts])
                       ]);
+
+                      final url =
+                          'https://image.pollinations.ai/prompt/japan-animated-cute-${response.text}';
+                      final imageResponse = await http.get(Uri.parse(url));
                       setState(() {
+                        _imageResponse = imageResponse.bodyBytes;
                         _response = response.text;
+                        _isLoading = false;
                       });
                     },
-                    child:
-                        _response == '' ? const Text('분석하기') : Text(_response),
+                    child: _isLoading
+                        ? const CircularProgressIndicator(
+                            valueColor: AlwaysStoppedAnimation(Colors.white),
+                          )
+                        : Text(_response == '' ? '분석' : _response,
+                            style: const TextStyle(fontSize: 16)),
                   ),
                 ],
               ),

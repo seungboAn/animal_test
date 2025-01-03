@@ -47,35 +47,42 @@ class CameraScreenState extends State<CameraScreen> {
       // appBar: AppBar(),
       body: Column(
         children: [
-          Expanded(child: Container(color: Colors.black)), // top black area
-          FutureBuilder<void>(
-            future: _initializeControllerFuture,
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.done) {
-                // If the Future is complete, display the preview.
-                return CameraPreview(_controller);
-              } else {
-                // Otherwise, display a loading indicator.
-                return const Center(child: CircularProgressIndicator());
-              }
-            },
+          Expanded(flex: 2, child: Container(color: Colors.black)),
+          Expanded(
+            flex: 6,
+            child: FutureBuilder<void>(
+              future: _initializeControllerFuture,
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.done) {
+                  // If the Future is complete, display the preview.
+                  return CameraPreview(_controller);
+                } else {
+                  // Otherwise, display a loading indicator.
+                  return Container(
+                    color: Colors.black,
+                    child: const Center(
+                      child: CircularProgressIndicator(
+                        valueColor: AlwaysStoppedAnimation(Colors.white),
+                      ),
+                    ),
+                    constraints: const BoxConstraints.expand(),
+                  );
+                }
+              },
+            ),
           ),
           Expanded(
+            flex: 2,
             child: Container(
               color: Colors.black,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  SizedBox(
-                    width: 48,
-                    height: 48,
-                  ),
-                  SizedBox(width: 16),
                   IconButton(
                     icon: const Icon(
                       Icons.lens,
                       color: Colors.redAccent,
-                      weight: 60,
+                      weight: 120,
                     ),
                     onPressed: () async {
                       // Take the Picture in a try / catch block. If anything goes wrong,
@@ -105,11 +112,6 @@ class CameraScreenState extends State<CameraScreen> {
                         print(e);
                       }
                     },
-                  ),
-                  SizedBox(width: 16),
-                  SizedBox(
-                    width: 48,
-                    height: 48,
                   ),
                 ],
               ),
